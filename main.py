@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 S_value = 100        #price of asset in GBP
 mu = 0.05            #annual drift (return expected)
@@ -13,4 +14,14 @@ Z = np.random.normal(0,1, (paths, steps))   #produces matrix
 
 S = np.zeros((paths, steps + 1))
 S[:, 0] = S_value
+#empty matrix to hold values
 
+for t in range(steps):
+    S[:, t+1] = S[:, t] * np.exp((mu - 0.5 * sigma**2) * dt + sigma * np.sqrt(dt) * Z[:, t])
+#iterates and updates all 10,000 prices simultaneously 
+
+columns = [f"t{i}" for i in range(S.shape[1])]
+df = pd.DataFrame(S, columns=columns)
+df.to_csv("Monte-Carlo-Paths.csv", index=False)
+
+print("Saved paths to Monte-Carlo-Paths.csv")
